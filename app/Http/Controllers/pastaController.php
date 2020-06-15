@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Pasta;
 
 class pastaController extends Controller
 {
     public function showPasta () {
-        $cards = config('pasta');
+        $cards = Pasta::all();
         $collection = collect($cards);
-        $collection = $collection -> map( function($item, $index){
-        $item['id'] = $index;
-        return $item;
-        });
-
         $lunga = $collection -> where('tipo', 'lunga');
         $corta = $collection -> where('tipo', 'corta');
         $cortissima = $collection -> where('tipo', 'cortissima');
@@ -22,22 +18,7 @@ class pastaController extends Controller
     }
 
     public function getPasta ($pastaType) {
-        $cards = config('pasta');
-        $collection = collect($cards);
-        $pastaGenerica = [];
-      
-        $collection = $collection -> map( function($item, $index){
-          $item['id'] = $index;
-          return $item;
-        });
-      
-        $cards = $collection;
-      
-        foreach ($cards as $card) {
-          if ($card['tipo'] == $pastaType) {
-            array_push($pastaGenerica, $card);
-          }
-        }
+        $pastaGenerica = Pasta::where('tipo', $pastaType) ->get();
         return $pastaGenerica;
     }
 
@@ -55,7 +36,7 @@ class pastaController extends Controller
     }
     public function singlePasta ($id) {
         $cards = config('pasta');
-        $card = $cards[$id];
+        $card = $cards[$id - 1];
         return view('showPasta', compact('card'));
     }
 }
